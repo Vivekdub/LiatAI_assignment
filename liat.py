@@ -40,20 +40,20 @@ def enhance_frame(frame):
     # 1. Denoise
     frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
 
-    # 2. Sharpen
-    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-    frame = cv2.filter2D(frame, -1, kernel)
+    # # 2. Sharpen
+    # kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+    # frame = cv2.filter2D(frame, -1, kernel)
 
-    # 3. Histogram equalization
-    ycrcb = cv2.cvtColor(frame, cv2.COLOR_BGR2YCrCb)
-    ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0])
-    frame = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
+    # # 3. Histogram equalization
+    # ycrcb = cv2.cvtColor(frame, cv2.COLOR_BGR2YCrCb)
+    # ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0])
+    # frame = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
 
     return frame
 
 while True:
     ret, frame = cap.read()
-    ret, frame = cap.read()
+    frame = enhance_frame(frame)
     if not ret:
         break
 
@@ -65,7 +65,7 @@ while True:
         conf = float(box.conf[0])
         cls = int(box.cls[0])
         # detections.append([x1, y1, x2, y2, conf])
-        if conf > 0.9: #and cls == 0:
+        if conf > 0.8: #and cls == 0:
             detections.append([x1, y1, x2, y2, conf])
 
     dets = np.array(detections) if detections else np.empty((0, 5))
@@ -83,7 +83,7 @@ while True:
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
 
     out.write(frame)
-    cv2.imshow("Tracking", frame)
+    # cv2.imshow("Tracking", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
